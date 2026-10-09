@@ -96,7 +96,7 @@ void processarToken(String token)
     return;
   }
 
-  // se for um bloco continuo de instrucoes juntas (ex: C6BA3E)
+  // se for um bloco continuo de instrucoes juntas
   if (soHex(token) && token.length() % 3 == 0)
   {
     for (int i = 0; i < token.length(); i += 3)
@@ -136,7 +136,7 @@ void carregarInstrucao(String s)
     memoriaCheia = false;
     memoria[4 + tamMemoria] = parseInstrucao(s);
     tamMemoria++;
-    memoria[0] = 4; // PC aponta para a primeira instrucao (indice 4)
+    memoria[0] = 4; // PC aponta para a primeira instrucao
     dump();
   }
   else
@@ -214,7 +214,7 @@ void executar()
   Serial.println("Programa concluido!");
 }
 
-// executa a operacao da ULA de 4 bits conforme a tabela da Figura 2
+// executa a operacao da ULA de 4 bits
 int ula(int x, int y, int s)
 {
   int nx = (~x) & 0xF;
@@ -256,7 +256,7 @@ int ula(int x, int y, int s)
     return 0;
 }
 
-// aciona os 4 leds com o valor de W (pino 13 = bit mais significativo)
+// aciona os 4 leds com o valor de W
 void escreverLeds(int valor)
 {
   digitalWrite(13, ((valor >> 3) & 1) ? HIGH : LOW);
@@ -268,31 +268,25 @@ void escreverLeds(int valor)
 // mostra o estado atual da memoria e dos registradores
 void dump()
 {
-  Serial.println("--------------------------------");
-  Serial.print("Memoria:       | ");
+  Serial.print("->|");
+  Serial.print(memoria[0]); // Imprime o PC como decimal
+  Serial.print("|");
+  printHex(memoria[1]);     // Imprime W
+  Serial.print("|");
+  printHex(memoria[2]);     // Imprime X
+  Serial.print("|");
+  printHex(memoria[3]);     // Imprime Y
+  Serial.print("| ");
+  
   for (int i = 0; i < tamMemoria; i++)
   {
-    if (i + 4 == memoria[0])
-    {
-      Serial.print("->");
-    }
     printInstrucao(memoria[i + 4]);
     Serial.print(" | ");
   }
   Serial.println();
-
-  Serial.print("Registradores: | ");
-  printHex(memoria[0]);
-  Serial.print(" | ");
-  printHex(memoria[1]);
-  Serial.print(" | ");
-  printHex(memoria[2]);
-  Serial.print(" | ");
-  printHex(memoria[3]);
-  Serial.println(" |");
 }
 
-// verifica se o formato e valido (3 caracteres hex)
+// verifica se o formato e valido
 bool instrucaoValida(String s)
 {
   if (s.length() != 3)
@@ -336,7 +330,7 @@ bool soHex(String s)
   return true;
 }
 
-// converte caractere hexadecimal para inteiro (0 a 15)
+// converte caractere hexadecimal para inteiro
 int hexParaInt(char c)
 {
   if (c >= '0' && c <= '9')
@@ -355,7 +349,7 @@ int parseInstrucao(String s)
   return (x << 8) | (y << 4) | op;
 }
 
-// imprime um numero em hexadecimal (0 a F)
+// imprime um numero em hexadecimal
 void printHex(int n)
 {
   n = n & 0xF;
